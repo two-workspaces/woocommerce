@@ -9,7 +9,7 @@
 Two services: the store (WordPress 7.1, PHP 8.3 and Apache, with WooCommerce 11.3) and a private MariaDB. Each has its own volume.
 
 - **Installed before it goes public.** A fresh WordPress shows its installer to whoever opens the URL first. Here WordPress is installed on the first boot, before the site answers, with a generated admin password. WooCommerce is activated, its tables are created, and the Shop, Cart, Checkout and My account pages exist when you first sign in. MariaDB has generated passwords and no public proxy.
-- **Sized to the plan.** Apache's worker count is set from the service's memory limit, so a small service queues requests instead of running out of memory. On a 0.5 GB service the store used about 140 MB under a load of product imports and reports, with MariaDB at about 130 MB.
+- **Sized to the plan.** Apache's worker count is set from the service's memory limit, so a small service queues requests instead of running out of memory. Tested on 0.5 GB services: after bulk product imports, reports and a guest order, the store read about 250 MB on Railway's meter and MariaDB about 135 MB.
 - **Limits for a real shop.** 128 MB uploads (the stock image stops at 2 MB), 256 MB of PHP memory, 5-minute requests for imports, pretty permalinks on, and WP-CLI built in.
 - **Real visitor addresses.** Orders and rate limits see the customer's IP, not Railway's edge.
 
@@ -34,6 +34,8 @@ Two services: the store (WordPress 7.1, PHP 8.3 and Apache, with WooCommerce 11.
 ### Implementation Details
 
 **Sign in** at `https://<your domain>/wp-admin` with the username `admin` and the `WP_ADMIN_PASSWORD` value from the WooCommerce service's Variables tab. WooCommerce then walks you through its setup: store location, currency, payments, shipping. Change the admin email under Settings → General, because order notifications go there.
+
+**Launching.** Until you launch the store, visitors see WooCommerce's "Coming soon" page instead of your shop. That is WooCommerce's own default for a new store. Switch it off under WooCommerce → Settings → Site visibility when you are ready.
 
 **Variables**, all read on the first boot only:
 
